@@ -58,10 +58,11 @@ function getBootstrap() {
 
 function getDevDashboard(filters) {
   requireDev_(); ensureDatabase_();
-  const employees = readRows_('Employees').filter(r => String(r.isActive) === 'true').map(safeEmployee_);
-  const uploads = readRows_('Uploads').sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt)));
-  const expenses = readRows_('Expenses').filter(r => (!filters || !filters.month || r.statementMonth === filters.month) && (!filters || !filters.employeeId || r.employeeId === filters.employeeId)).map(safeExpense_);
-  return { employees, uploads, expenses, months: getMonths_(), categories: APP.categories };
+  filters = filters || {};
+  const employees = asArray_(readRows_('Employees')).filter(r => String(r.isActive) === 'true').map(safeEmployee_);
+  const uploads = asArray_(readRows_('Uploads')).sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt)));
+  const expenses = asArray_(readRows_('Expenses')).filter(r => (!filters.month || r.statementMonth === filters.month) && (!filters.employeeId || r.employeeId === filters.employeeId)).map(safeExpense_);
+  return { employees, uploads, expenses, months: asArray_(getMonths_()), categories: APP.categories };
 }
 
 function createEmployee(firstName, pin) {
@@ -216,6 +217,7 @@ function digestHex_(bytes) { return Utilities.computeDigest(Utilities.DigestAlgo
 function newId_(prefix) { return prefix + '_' + Utilities.getUuid().replace(/-/g,''); }
 function iso_() { return new Date().toISOString(); }
 function userError_(message) { const e = new Error(message); e.isUserFacing = true; return e; }
+function asArray_(value) { return Array.isArray(value) ? value : []; }
 function safeEmployee_(r) { return { employeeId:r.employeeId, firstName:r.firstName, isActive:r.isActive, createdAt:r.createdAt, updatedAt:r.updatedAt }; }
 function safeExpense_(r) { return { expenseId:r.expenseId, statementMonth:r.statementMonth, employeeId:r.employeeId, employeeNameRaw:r.employeeNameRaw, expenseDate:r.expenseDate, description:r.description, suggestedCategory:r.suggestedCategory, confidence:Number(r.confidence||0), selectedCategory:r.selectedCategory, status:r.status }; }
 function matchEmployee_(raw, employees) { const n = normalizeName_(String(raw).split(' ')[0]); return employees.find(e => e.normalizedFirstName === n && String(e.isActive)==='true') || null; }
