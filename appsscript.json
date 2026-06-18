@@ -18,7 +18,7 @@
   ],
   "runtimeVersion": "V8",
   "webapp": {
-    "access": "DOMAIN",
-    "executeAs": "USER_DEPLOYING"
+    "access": "ANYONE",
+    "executeAs": "USER_ACCESSING"
   }
 }

@@ -5,7 +5,7 @@ const ExpenseTests = (() => {
     const results = [];
     ensureDatabase_();
     results.push(assert('Sheet initialization creates all required sheets', Object.keys(APP.sheets).every(n => !!ensureDatabase_().getSheetByName(n))));
-    results.push(assert('Dev authorization recognizes approved email list', isDevEmail_('skhun@dublincleaners.com') && isDevEmail_('ss.sku@gmail.com') && !isDevEmail_('other@example.com')));
+    results.push(assert('Dev authorization recognizes approved email list', isDevEmail_(' skhun@dublincleaners.com ') && isDevEmail_('SS.SKU@PROTONMAIL.COM') && !isDevEmail_('other@example.com')));
     const salt = 'unit_salt'; const hash = hashPin_('1234', salt);
     results.push(assert('PIN hashing is salted and validates correct PIN only', verifyPin_('1234', salt, hash) && !verifyPin_('4321', salt, hash) && hash !== hashPin_('1234', 'different')));
     results.push(assert('Category validation accepts only fixed categories', APP.categories.length === 23 && APP.categories.indexOf('Meals') > -1));
