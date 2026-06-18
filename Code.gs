@@ -5,7 +5,7 @@ const APP = {
   spreadsheetName: 'Dublin Cleaners Expense Database',
   settingsSpreadsheetIdKey: 'spreadsheetId',
   sessionTtlSeconds: 21600,
-  devEmails: ['skhun@dublincleaners.com', 'ss.sku@gmail.com'],
+  devEmails: ['skhun@dublincleaners.com', 'ss.sku@protonmail.com'],
   categories: ['Account', 'Advertising', 'Computer Claims', 'Cleaning Supplies', 'Contributions', 'Delivery', 'Distribution Dues', 'Meals', 'Employee Welfare / Entertainment / Gifts', 'Insurance', 'Leased Technology', 'Legal Professional Licenses', 'Maintenance', 'Miscellaneous', 'Office', 'Outside Services', 'Postage', 'Recruiting', 'Telephone', 'Training', 'Meetings', 'Travel', 'Utilities'],
   sheets: {
     Settings: ['key', 'value', 'updatedAt', 'updatedBy'],
@@ -196,8 +196,9 @@ function readRows_(name) { const sh = getTable_(name).sheet; const values = sh.g
 function appendRow_(name, obj) { const headers = APP.sheets[name]; getTable_(name).sheet.appendRow(headers.map(h => obj[h] === undefined ? '' : obj[h])); }
 function indexMap_(headers) { const m = {}; headers.forEach((h,i)=>m[h]=i); return m; }
 function updateUploadStatus_(uploadId, status, rowCount) { const t = getTable_('Uploads'), v = t.sheet.getDataRange().getValues(), h = indexMap_(v[0]); for (let i=1;i<v.length;i++) if (v[i][h.uploadId]===uploadId) { t.sheet.getRange(i+1,h.status+1).setValue(status); t.sheet.getRange(i+1,h.rowCount+1).setValue(rowCount); } }
-function currentEmail_() { return String(Session.getActiveUser().getEmail() || '').toLowerCase(); }
-function isDevEmail_(email) { return APP.devEmails.indexOf(String(email || '').toLowerCase()) > -1; }
+function normalizeEmail_(email) { return String(email || '').trim().toLowerCase(); }
+function currentEmail_() { return normalizeEmail_(Session.getActiveUser().getEmail()); }
+function isDevEmail_(email) { return APP.devEmails.indexOf(normalizeEmail_(email)) > -1; }
 function requireDev_() { if (!isDevEmail_(currentEmail_())) { audit_('UNAUTHORIZED_DEV_ACCESS', currentEmail_(), 'UNKNOWN', {}); throw userError_('You are not authorized to access Dev tools.'); } }
 function requireEmployeeSession_(token) { const raw = CacheService.getScriptCache().get('session:' + token); if (!raw) throw userError_('Your session expired. Please log in again.'); return JSON.parse(raw); }
 function hashPin_(pin, salt) { return digestHex_(Utilities.newBlob(salt + ':' + pin).getBytes()); }

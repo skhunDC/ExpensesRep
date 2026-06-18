@@ -9,9 +9,9 @@ This Google Apps Script HTMLService application lets Dublin Cleaners upload mont
 Dev access is restricted to these Google accounts:
 
 - `skhun@dublincleaners.com`
-- `ss.sku@gmail.com`
+- `ss.sku@protonmail.com`
 
-Every Dev server function calls a server-side authorization check based on `Session.getActiveUser().getEmail()`. Unauthorized users receive a branded Unauthorized screen and cannot retrieve employees, uploads, expense data, or upload logic.
+Every Dev server function calls a server-side authorization check based on `Session.getActiveUser().getEmail()`, normalized with trimming and case-insensitive matching so the Chrome/Google account email is the only Dev credential needed. Unauthorized users receive a branded Unauthorized screen and cannot retrieve employees, uploads, expense data, or upload logic.
 
 Employees do not need Google account authorization. They log in with first name and a 4-digit PIN. PINs are salted and hashed with Apps Script `Utilities.computeDigest`; plaintext PINs are never stored.
 
