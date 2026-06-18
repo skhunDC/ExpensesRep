@@ -11,9 +11,9 @@ Dev access is restricted to these Google accounts:
 - `skhun@dublincleaners.com`
 - `ss.sku@protonmail.com`
 
-Every Dev server function calls a server-side authorization check based on `Session.getActiveUser().getEmail()`, normalized with trimming and case-insensitive matching so the Chrome/Google account email is the only Dev credential needed. Unauthorized users receive a branded Unauthorized screen and cannot retrieve employees, uploads, expense data, or upload logic.
+Every Dev server function calls a server-side authorization check based on `Session.getActiveUser().getEmail()`, normalized with trimming and case-insensitive matching so the Chrome/Google account email is the only Dev credential needed. The Apps Script web app is configured to execute as the user accessing it and allow any signed-in Google account, which lets the Dev check evaluate the Google account currently signed into Chrome instead of the deploying account or only the Dublin Cleaners domain. Unauthorized users receive a branded Unauthorized screen and cannot retrieve employees, uploads, expense data, or upload logic.
 
-Employees do not need Google account authorization. They log in with first name and a 4-digit PIN. PINs are salted and hashed with Apps Script `Utilities.computeDigest`; plaintext PINs are never stored.
+Employees do not need Dev authorization. After opening the web app, they log in with first name and a 4-digit PIN. PINs are salted and hashed with Apps Script `Utilities.computeDigest`; plaintext PINs are never stored.
 
 ## Database Model
 
@@ -84,9 +84,10 @@ The Category Guide modal lists all 23 required categories with future-ready poli
 
 1. Open Apps Script **Deploy > New deployment**.
 2. Choose **Web app**.
-3. Execute as the deploying user so the app can own the database spreadsheet and Drive conversions.
-4. Set access according to company policy.
-5. Share the deployment URL with Dev users and employees.
+3. Deploy the web app as **User accessing the web app** so Dev Home checks the Chrome signed-in Google account.
+4. Set access to **Anyone with a Google account** so both approved Dev accounts, including the ProtonMail-address Google account, can be evaluated.
+5. Make sure the database spreadsheet and any required Drive resources are shared with the approved Dev users who need to upload statements.
+6. Share the deployment URL with Dev users and employees.
 
 ## Testing Steps
 
